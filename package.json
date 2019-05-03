@@ -1,0 +1,58 @@
+{
+  "name": "redux-bundler-async-resources-hooks",
+  "version": "0.0.1",
+  "description": "React bindings to redux-bundler-async-resources",
+  "main": "index.js",
+  "scripts": {
+    "build": "microbundle",
+    "prepublishOnly": "microbundle",
+    "dev": "microbundle watch",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abuinitski/redux-bundler-hook.git"
+  },
+  "keywords": [
+    "react",
+    "redux"
+  ],
+  "author": "Arseni Buinitski <arseni.buinitski@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/abuinitski/redux-bundler-async-resources-hooks/issues"
+  },
+  "homepage": "https://github.com/abuinitski/redux-bundler-async-resources-hooks#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
+    "babel-jest": "^24.7.1",
+    "jest": "^24.7.1",
+    "microbundle": "^0.11.0",
+    "prettier": "^1.17.0",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.6",
+    "react-testing-library": "^7.0.0",
+    "redux-bundler": "^23.1.0",
+    "redux-bundler-async-resources": "^1.1.0",
+    "redux-bundler-hook": "^1.0.1"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": false,
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "bracketSpacing": true,
+    "jsxSingleQuote": false,
+    "jsxBracketSameLine": false,
+    "arrowParens": "avoid"
+  },
+  "peerDependencies": {
+    "redux-bundler": "*",
+    "redux-bundler-async-resources": "^1.1.0",
+    "redux-bundler-hook": "^1.0.1",
+    "react": ">=16.8.6"
+  }
+}

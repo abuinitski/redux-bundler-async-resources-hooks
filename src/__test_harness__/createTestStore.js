@@ -12,7 +12,7 @@ export default function createTestStore(settings = {}) {
 
   const oneResourceBundle = createAsyncResourceBundle({
     name: 'testResource',
-    getPromise: ({ apiClient }) => apiClient.fetchItem('singularItem'),
+    getPromise: ({ apiClient }) => apiClient.fetchItem('testResource'),
     ...settings,
   })
 

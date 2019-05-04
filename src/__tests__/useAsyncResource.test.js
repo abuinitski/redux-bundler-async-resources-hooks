@@ -4,41 +4,65 @@ import initHookTest from '../__test_harness__/initHookTest'
 import useAsyncResource from '../useAsyncResource'
 
 describe('useAsyncResource hook', () => {
-  const initUseAsyncResourceTest = (store, ...hookArgs) => initHookTest(useAsyncResource, store, ...hookArgs)
+  const initUseAsyncResourceTest = (store, ...hookArgs) =>
+    initHookTest(useAsyncResource, store, 'testResource', ...hookArgs)
 
-  test.todo('returns data item')
+  test('returns all relevant properties about a resource', async () => {
+    const { store, apiMock } = createTestStore()
+    store.doFetchTestResource()
+    await apiMock.resolveFetchRequest('testResource')
 
-  test.todo('returns all relevant properties about a resource')
+    const { ref } = initUseAsyncResourceTest(store, 'testResource')
 
-  test.todo('reflects data changes')
+    expect(ref.current.testResource).toBe(':TestResource:')
+    expect(ref.current.testResourceIsLoading).toBe(false)
+    expect(ref.current.testResourceIsPresent).toBe(true)
+    expect(ref.current.testResourceError).toBe(null)
+    expect(ref.current.testResourceIsReadyForRetry).toBe(false)
+    expect(ref.current.testResourceErrorIsPermanent).toBe(false)
+  })
 
-  test.todo('throws a promise when there is no data to show')
+  test('reflects data changes', async () => {
+    const { store, apiMock } = createTestStore()
+    store.doFetchTestResource()
+    await apiMock.resolveFetchRequest('testResource')
 
-  test.todo('returns a promise when there is data to show but it is refreshing')
+    const { ref, act } = initUseAsyncResourceTest(store, 'testResource')
 
-  test.todo('throws an error when there is no data to show due to an error')
+    await act(async () => {
+      store.doFetchTestResource()
+      await apiMock.resolveFetchRequest('testResource', 'BOOM')
+    })
 
-  test.todo('returns an error when there is data to show but there is an active error')
+    expect(ref.current.testResourceError).toBe('BOOM')
+  })
 
   describe('loading promise', () => {
+    test('throws a promise when there is no data to show', async () => {
+      const { store } = createTestStore()
+      const { ref, act } = initUseAsyncResourceTest(store, 'testResource', { throwPromises: true })
+    })
+
     test.todo('resolves when data loading is completed')
   })
 
-  describe('thrown error', () => {
-    test.todo('forwards permanent property')
-
-    test.todo('indicates timestamp for next retry')
-
-    test.todo('allows a manual retry')
-  })
-
-  describe('settings', () => {
-    test.todo('allows to disable throwing promises')
-
-    test.todo('allows to enable "always throw promise" mode')
-
-    test.todo('allows to disable throwing errors')
-
-    test.todo('allows to enable "always throw error" mode')
-  })
+  // describe('thrown error', () => {
+  //   test.todo('throws an error when there is no data to show due to an error')
+  //
+  //   test.todo('forwards permanent property')
+  //
+  //   test.todo('indicates timestamp for next retry')
+  //
+  //   test.todo('allows a manual retry')
+  // })
+  //
+  // describe('settings', () => {
+  //   test.todo('allows to disable throwing promises')
+  //
+  //   test.todo('allows to enable "always throw promise" mode')
+  //
+  //   test.todo('allows to disable throwing errors')
+  //
+  //   test.todo('allows to enable "always throw error" mode')
+  // })
 })

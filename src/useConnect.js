@@ -1,10 +1,8 @@
-import { useContext, useEffect, useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 
-import ReduxBundlerContext from './ReduxBundlerContext'
+// TODO: clean me up after https://github.com/mpeyper/react-hooks-testing-library/issues/60 is resolved
 
-export default function useConnect(...args) {
-  const { store } = useContext(ReduxBundlerContext)
-
+export default function useConnect(store, ...args) {
   const [keysToWatch, actions] = useMemo(() => cookArguments(store, args), args)
 
   const [state, setState] = useState(() => store.select(keysToWatch))
@@ -25,7 +23,7 @@ export default function useConnect(...args) {
   if (prevKeysToWatchRef.current !== keysToWatch) {
     return {
       ...actions,
-      ...store.select(keysToWatch)
+      ...store.select(keysToWatch),
     }
   }
 

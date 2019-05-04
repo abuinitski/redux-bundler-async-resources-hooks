@@ -2,7 +2,7 @@ const Items = {
   1: 'One',
   2: 'Two',
   3: 'Three',
-  singularItem: ':TestResource:',
+  testResource: ':TestResource:',
   nilItem: null,
 }
 

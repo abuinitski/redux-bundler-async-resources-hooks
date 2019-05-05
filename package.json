@@ -1,6 +1,6 @@
 {
   "name": "redux-bundler-async-resources-hooks",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0",
   "description": "React bindings to redux-bundler-async-resources",
   "main": "index.js",
   "scripts": {

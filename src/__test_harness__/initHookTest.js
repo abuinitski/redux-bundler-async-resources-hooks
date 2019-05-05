@@ -15,8 +15,15 @@ export default function initHookTest(hook, store, ...initialHookArguments) {
 
   const { rerender } = renderHook(
     () => {
-      ref.current = hook(...hookArgs)
-      ref.renderCount += 1
+      try {
+        ref.current = hook(...hookArgs)
+        ref.error = null
+      } catch (e) {
+        ref.current = null
+        ref.error = e
+      } finally {
+        ref.renderCount += 1
+      }
     },
     { wrapper }
   )

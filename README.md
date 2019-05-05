@@ -13,3 +13,4 @@ npm install --save redux-bundler-hook redux-bundler-async-resources redux-bundle
 ## Usage
 
 
+... throwing should be approached with care – hooks rules

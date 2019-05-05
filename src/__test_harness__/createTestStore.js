@@ -22,7 +22,13 @@ export default function createTestStore(settings = {}) {
     ...settings,
   })
 
-  const storeFactory = composeBundlesRaw(appTimeBundle, createReactorBundle(), apiMockBundle, oneResourceBundle)
+  const storeFactory = composeBundlesRaw(
+    appTimeBundle,
+    createReactorBundle(),
+    apiMockBundle,
+    oneResourceBundle,
+    multipleResourcesBundle
+  )
 
   return { store: storeFactory(), apiMock }
 }

@@ -1,99 +1,66 @@
-import { useMemo, useContext } from 'react'
+import { useMemo, useEffect } from 'react'
 
-import useConnect from './useConnect'
-import { ReduxBundlerContext } from 'redux-bundler-hook'
+import { useConnect, useReduxBundlerStore } from 'redux-bundler-hook'
 
-export default function useAsyncResource(name, settings = { throwPromises: false, throwErrors: false }) {
-  const { store } = useContext(ReduxBundlerContext)
-  const { selectors, keys } = useNames(name)
-  const data = useConnect(store, ...selectors)
+import useAsyncResourceKeys from './useAsyncResourceKeys'
+import AsyncResourceError from './AsyncResourceError'
+import checkThrows from './checkThrows'
 
-  const dataIsPresent = data[keys.isPresent]
-  const dataIsLoading = data[keys.isLoading]
-  const dataError = data[keys.error]
+useAsyncResource.defaults = { throwPromises: false, throwErrors: false }
 
-  // data  error  loading    |    ++promises   |    +promises    |     -promises      |    ++errors      |    +errors     |    -errors    |
-  //  -      -       -       |        X                 X                             |                                                   |
-  //  -      -       +       |        X                 X                             |                                                   |
-  //  -      +       -       |        X                 X                             |      X                   X                        |
-  //  -      +       +       |        X                 X                             |      X                                            |
-  //  +      -       -       |                                                        |                                                   |
-  //  +      -       +       |        X                                               |                                                   |
-  //  +      +       -       |                                                        |      X                                            |
-  //  +      +       +       |        X                                               |      X                                            |
+export default function useAsyncResource(name, settings = { ...useAsyncResource.defaults, eagerFetch: false }) {
+  // good performance optimization could be to only limit watched selectors to a certain minimal needed set
+  // though need to profile first – not sure even such performance might be an issue here
 
-  if (settings.throwPromises) {
-    if (settings.throwPromises === 'always' && dataIsLoading) {
-      throwPromise(store, keys)
-    }
+  const { selectors, keys, actionCreators } = useAsyncResourceKeys(name)
+  const selectorsArray = useMemo(() => Object.values(selectors), [name])
+  const store = useReduxBundlerStore()
+  const values = useConnect(...selectorsArray)
 
-    if (!dataIsPresent) {
-      throwPromise(store, keys)
-    }
+  maybeEagerFetch(values, keys, actionCreators, store, settings)
+
+  const { throwPromise, throwError } = checkThrows(values, keys, settings)
+  if (throwPromise) {
+    throw makeResourcePromise(values, keys, selectors, store, settings)
+  }
+  if (throwError) {
+    throw makeResourceError(name, values, keys, actionCreators, store)
   }
 
-  if (settings.throwErrors && !dataIsPresent && )
-
-  return data
+  return values
 }
 
-function throwPromise(store, keys) {}
+function maybeEagerFetch(values, keys, actionCreators, store, settings) {
+  const pending = values[keys.isPendingForFetch]
 
-function throwError(data, keys) {}
-
-function useNames(name) {
-  return useMemo(() => {
-    const {
-      dataSelector,
-      dataKey,
-      loadingSelector,
-      loadingKey,
-      presentSelector,
-      presentKey,
-      errorSelector,
-      errorKey,
-      readyForRetrySelector,
-      readyForRetryKey,
-      errorIsPermanentSelector,
-      errorIsPermanentKey,
-    } = makeSelectorNames(name)
-
-    return {
-      selectors: [
-        dataSelector,
-        loadingSelector,
-        presentSelector,
-        errorSelector,
-        readyForRetrySelector,
-        errorIsPermanentSelector,
-      ],
-      keys: {
-        data: dataKey,
-        isLoading: loadingKey,
-        isPresent: presentKey,
-        error: errorKey,
-        isReadyForRetry: readyForRetryKey,
-        errorIsPermanent: errorIsPermanentKey,
-      },
+  useEffect(() => {
+    if (settings.eagerFetch && pending) {
+      store[actionCreators.doFetch]()
     }
-  }, [name])
+  }, [settings.eagerFetch, pending])
 }
 
-function makeSelectorNames(name) {
-  const upName = name.charAt(0).toUpperCase() + name.slice(1)
+function makeResourcePromise(values, keys, selectors, store, settings) {
+  let state = values
 
-  return {
-    dataSelector: `select${upName}`,
-    dataKey: name,
-    loadingSelector: `select${upName}IsLoading`,
-    loadingKey: `${name}IsLoading`,
-    presentSelector: `select${upName}IsPresent`,
-    presentKey: `${name}IsPresent`,
-    errorSelector: `select${upName}Error`,
-    errorKey: `${name}Error`,
-    readyForRetrySelector: `select${upName}IsReadyForRetry`,
-    readyForRetryKey: `${name}IsReadyForRetry`,
-    errorIsPermanentSelector: `select${upName}ErrorIsPermanent`,
-    errorIsPermanentKey: `${name}ErrorIsPermanent`,
-  }
+  return new Promise(resolve => {
+    const unsubscribe = store.subscribeToSelectors(Object.values(selectors), changes => {
+      state = {
+        ...state,
+        ...changes,
+      }
+      if (!checkThrows(state, keys, settings).throwPromise) {
+        resolve()
+        unsubscribe()
+      }
+    })
+  })
+}
+
+function makeResourceError(name, values, keys, actionCreators, store) {
+  return new AsyncResourceError(name, values[keys.error], {
+    permanent: values[keys.errorIsPermanent],
+    retryAt: values[keys.retryAt],
+    retry: () => store[actionCreators.doFetch](),
+  })
 }

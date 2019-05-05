@@ -1,6 +1,6 @@
 {
   "name": "redux-bundler-async-resources-hooks",
-  "version": "0.0.1",
+  "version": "1.0.0-alpha.0",
   "description": "React bindings to redux-bundler-async-resources",
   "main": "index.js",
   "scripts": {
@@ -26,8 +26,8 @@
   "devDependencies": {
     "@babel/preset-env": "^7.4.4",
     "@babel/preset-react": "^7.0.0",
-    "babel-jest": "^24.7.1",
-    "jest": "^24.7.1",
+    "babel-jest": "^24.8.0",
+    "jest": "^24.8.0",
     "microbundle": "^0.11.0",
     "prettier": "^1.17.0",
     "react": "^16.9.0-alpha.0",
@@ -36,8 +36,8 @@
     "react-test-renderer": "^16.9.0-alpha.0",
     "react-testing-library": "^7.0.0",
     "redux-bundler": "^23.1.0",
-    "redux-bundler-async-resources": "^1.1.0",
-    "redux-bundler-hook": "^1.0.1"
+    "redux-bundler-async-resources": "^1.1.1",
+    "redux-bundler-hook": "^1.0.3"
   },
   "prettier": {
     "printWidth": 120,
@@ -53,8 +53,8 @@
   },
   "peerDependencies": {
     "redux-bundler": "*",
-    "redux-bundler-async-resources": "^1.1.0",
-    "redux-bundler-hook": "^1.0.1",
+    "redux-bundler-async-resources": "^1.1.1",
+    "redux-bundler-hook": "^1.0.3",
     "react": ">=16.8.6"
   }
 }

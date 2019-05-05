@@ -3,3 +3,5 @@ export { default as useAsyncResourceKeys } from './useAsyncResourceKeys'
 
 export { default as useAsyncResourcesItem } from './useAsyncResourcesItem'
 export { default as useAsyncResourcesKeys } from './useAsyncResourcesKeys'
+
+export { default as AsyncResourceError } from './AsyncResourceError'

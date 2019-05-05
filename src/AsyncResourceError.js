@@ -5,6 +5,7 @@ export default function AsyncResourceError(name, originalError, { permanent, ret
 
   this.name = 'AsyncResourceError'
   this.message = message
+  this.resourceName = name
   this.originalError = originalError
   this.permanent = Boolean(permanent)
   this.retryAt = retryAt

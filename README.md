@@ -1,4 +1,4 @@
-# Redux-Bundler Async Resources Hooks Hook
+# Redux-Bundler Async Resources Hooks
 
 ![](https://img.shields.io/npm/v/redux-bundler-async-resources-hooks.svg) ![](https://img.shields.io/npm/dt/redux-bundler-async-resources-hooks.svg) [![CircleCI](https://circleci.com/gh/abuinitski/redux-bundler-async-resources-hooks/tree/master.svg?style=svg)](https://circleci.com/gh/abuinitski/redux-bundler-async-resources-hooks/tree/master)
 

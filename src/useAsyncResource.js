@@ -8,7 +8,13 @@ import checkThrows from './checkThrows'
 
 useAsyncResource.defaults = { throwPromises: false, throwErrors: false }
 
-export default function useAsyncResource(name, settings = { ...useAsyncResource.defaults, eagerFetch: false }) {
+export default function useAsyncResource(name, inputSettings = null) {
+  const settings = {
+    ...useAsyncResource.defaults,
+    eagerFetch: false,
+    ...inputSettings,
+  }
+
   // good performance optimization could be to only limit watched selectors to a certain minimal needed set
   // though need to profile first – not sure even such performance might be an issue here
 

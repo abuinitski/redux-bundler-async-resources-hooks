@@ -10,11 +10,13 @@ useAsyncResourcesItem.defaults = { throwPromises: false, throwErrors: false }
 
 const TransformedKeys = makeAsyncResourceBundleKeys('item').keys
 
-export default function useAsyncResourcesItem(
-  name,
-  itemId,
-  settings = { ...useAsyncResourcesItem.defaults, eagerFetch: false }
-) {
+export default function useAsyncResourcesItem(name, itemId, inputSettings = null) {
+  const settings = {
+    ...useAsyncResourcesItem.defaults,
+    eagerFetch: false,
+    ...inputSettings,
+  }
+
   const { selectors: sourceSelectors, keys: sourceKeys, actionCreators } = useAsyncResourcesKeys(name)
 
   const store = useReduxBundlerStore()

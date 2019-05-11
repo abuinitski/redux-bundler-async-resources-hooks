@@ -1,11 +1,11 @@
 import { useMemo, useEffect } from 'react'
 import { useConnect, useReduxBundlerStore } from 'redux-bundler-hook'
 import { asyncResources, makeAsyncResourceBundleKeys } from 'redux-bundler-async-resources'
+import makeDebugLogger from 'debug'
 
 import useAsyncResourcesKeys from './useAsyncResourcesKeys'
 import checkThrows from './checkThrows'
 import AsyncResourceError from './AsyncResourceError'
-import makeDebugLogger from './debug'
 
 useAsyncResourcesItem.defaults = { throwPromises: false, throwErrors: false }
 

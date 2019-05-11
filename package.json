@@ -56,5 +56,8 @@
     "redux-bundler-async-resources": "^1.1.1",
     "redux-bundler-hook": "^1.0.3",
     "react": ">=16.8.6"
+  },
+  "dependencies": {
+    "debug": ">=4"
   }
 }

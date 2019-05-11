@@ -5,6 +5,7 @@ import { asyncResources, makeAsyncResourceBundleKeys } from 'redux-bundler-async
 import useAsyncResourcesKeys from './useAsyncResourcesKeys'
 import checkThrows from './checkThrows'
 import AsyncResourceError from './AsyncResourceError'
+import makeDebugLogger from './debug'
 
 useAsyncResourcesItem.defaults = { throwPromises: false, throwErrors: false }
 
@@ -17,12 +18,16 @@ export default function useAsyncResourcesItem(name, itemId, inputSettings = null
     ...inputSettings,
   }
 
+  const debug = makeDebugLogger(`useAsyncResourcesItem:${name}:${itemId}`)
+  debug('render', itemId, settings)
+
   const { selectors: sourceSelectors, keys: sourceKeys, actionCreators } = useAsyncResourcesKeys(name)
 
   const store = useReduxBundlerStore()
   const storedState = useConnect(sourceSelectors.items)
 
   const item = storedState[sourceKeys.items][itemId]
+  debug('render data state', item)
 
   maybeEagerFetch(itemId, item, actionCreators, store, settings)
 
@@ -31,10 +36,10 @@ export default function useAsyncResourcesItem(name, itemId, inputSettings = null
 
     const { throwPromise, throwError } = checkThrows(transformedValues, TransformedKeys, settings)
     if (throwPromise) {
-      return { throwValue: makeResourcePromise(itemId, sourceSelectors, sourceKeys, store, settings) }
+      return { throwValue: makeResourcePromise(itemId, sourceSelectors, sourceKeys, store, settings, debug) }
     }
     if (throwError) {
-      return { throwValue: makeResourceError(name, itemId, transformedValues, actionCreators, store) }
+      return { throwValue: makeResourceError(name, itemId, transformedValues, actionCreators, store, debug) }
     }
 
     return { returnValue: transformedValues }
@@ -57,12 +62,15 @@ function maybeEagerFetch(itemId, item, actionCreators, store, settings) {
   }, [settings.eagerFetch, pending])
 }
 
-function makeResourcePromise(itemId, selectors, keys, store, settings) {
+function makeResourcePromise(itemId, selectors, keys, store, settings, debug) {
   return new Promise(resolve => {
+    debug('throwing a promise...')
     const unsubscribe = store.subscribeToSelectors([selectors.items], changes => {
       const values = makeItemValues(changes[keys.items][itemId])
+      debug('promise state change: ', values)
 
       if (!checkThrows(values, TransformedKeys, settings).throwPromise) {
+        debug('resolving promise')
         resolve()
         unsubscribe()
       }
@@ -70,7 +78,8 @@ function makeResourcePromise(itemId, selectors, keys, store, settings) {
   })
 }
 
-function makeResourceError(name, itemId, transformedValues, actionCreators, store) {
+function makeResourceError(name, itemId, transformedValues, actionCreators, store, debug) {
+  debug('throwing an error...')
   return new AsyncResourceError(name, transformedValues.itemError, {
     permanent: transformedValues.itemErrorIsPermanent,
     retryAt: transformedValues.itemRetryAt,
